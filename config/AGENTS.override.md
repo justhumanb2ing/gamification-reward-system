@@ -1,17 +1,10 @@
-# config/supabase/AGENTS.override.md
+# config/AGENTS.override.md
 
 ## 목표
 Supabase 데이터베이스 스키마 변경(컬럼/타입/구조)이 API 응답 및 프론트엔드 타입 정의에 자동으로 반영될 수 있도록, 데이터 일관성과 타입 안정성을 유지한다.
 
 ## 적용 범위
 Supabase 스키마 변경 시에만 전체 자동화 파이프라인을 수행한다. 변경이 없으면 SQL·push.sh·명령어 안내를 생성하지 않는다.
-
-## 자동 RLS 템플릿
-(1) user_id 컬럼: self-access(select/insert/update/delete), RLS enable.
-(2) 로그 테이블(*_log, *_history): insert 허용, select 본인만, update/delete 금지.
-(3) 공개 참조 테이블: select 전용.
-(4) 관리자 테이블: 기본 전면 금지, 관리자/시스템 사용자만 허용 정책.
-(5) 누락 감지: 필요한 RLS 없으면 경고 후 자동 생성.
 
 ## 작업 플로우
 1) Supabase SQL Migration: supabase/migrations/에 YYYYMMDD_HHMM_description.sql, 변경 내용+RLS 포함.
