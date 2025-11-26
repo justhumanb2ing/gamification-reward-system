@@ -5,16 +5,14 @@ import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 import { completeMissionAction } from "@/app/actions/complete-mission";
+import type { MissionWithStatus } from "@/types/routine";
 
-type MissionWithStatus = {
-  id: string;
-  title: string;
-  rewardExp: number;
-  period: "daily" | "once" | "event";
-  completedToday: boolean;
+type Props = {
+  missions: MissionWithStatus[];
+  disabled?: boolean;
 };
 
-export function MissionList({ missions }: { missions: MissionWithStatus[] }) {
+export function MissionList({ missions, disabled = false }: Props) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [stageMessage, setStageMessage] = useState<string | null>(null);
@@ -28,6 +26,10 @@ export function MissionList({ missions }: { missions: MissionWithStatus[] }) {
   };
 
   const handleComplete = (missionId: string) => {
+    if (disabled) {
+      return;
+    }
+
     startTransition(async () => {
       const completionDate = getLocalDate();
       const result = await completeMissionAction(missionId, completionDate);
@@ -103,7 +105,7 @@ export function MissionList({ missions }: { missions: MissionWithStatus[] }) {
 
       <div className="mt-4 grid gap-3">
         {missions.map((mission) => {
-          const disabled = mission.completedToday || isPending;
+          const buttonDisabled = disabled || mission.completedToday || isPending;
           return (
             <motion.div
               key={mission.id}
@@ -123,15 +125,15 @@ export function MissionList({ missions }: { missions: MissionWithStatus[] }) {
               <button
                 type="button"
                 onClick={() => handleComplete(mission.id)}
-                disabled={disabled}
+                disabled={buttonDisabled}
                 className={`rounded-full px-4 py-2 text-sm font-semibold text-white transition ${
-                  disabled
+                  buttonDisabled
                     ? "bg-slate-300"
                     : "bg-indigo-600 shadow-md shadow-indigo-200 hover:bg-indigo-700"
                 }`}
-                >
-                  {mission.completedToday ? "완료됨" : "미션 완료"}
-                </button>
+              >
+                {mission.completedToday ? "완료됨" : "미션 완료"}
+              </button>
             </motion.div>
           );
         })}

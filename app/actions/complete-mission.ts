@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createServiceRoleClient } from "@/lib/supabase/admin";
+import { DEMO_USER_ID } from "@/config/demo-user";
 
 type CompleteMissionResult =
   | {
@@ -21,9 +22,6 @@ type CompleteMissionResult =
       ok: false;
       message: string;
     };
-
-const DEMO_USER_ID =
-  process.env.DEMO_USER_ID ?? "00000000-0000-0000-0000-000000000001";
 
 /**
  * Server Action: 주어진 미션을 데모 유저에게 완료 처리한다.

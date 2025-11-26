@@ -54,3 +54,10 @@
 - `p_user_id` 인자는 제거하거나 내부적으로 `auth.uid()`만 사용하도록 조정.
 - RPC 타입을 `supabase gen types`로 재생성해 `types/database.types.ts`에 반영.
 - 연출 강화: Stage 업 시 모달/사운드/haptic 추가, `next_stage_threshold`를 사용해 남은 EXP 안내.
+
+## 10) 미션 초기화(데모)
+- UI: Pet 카드의 `미션 초기화` 버튼 클릭 시 즉시 낙관적 업데이트로 Pet/미션 상태를 리셋.
+- 서버 액션: `resetMissionsAction` → `service/routine-pet.ts`의 `resetUserMissions` 호출.
+  - 처리: `user_missions`에서 데모 유저 로그 삭제 → `pets.total_exp`/`current_stage_id`를 Stage 표 최하단 값으로 재설정.
+  - 반환: 초기화된 스냅샷을 내려주고 `/` 경로 revalidate.
+- 낙관적 UI: 버튼 클릭 직후 Pet EXP/Stage를 베이스 Stage로, 미션 완료 여부를 전부 미완료로 갱신 후 서버 응답으로 최종 상태 동기화.

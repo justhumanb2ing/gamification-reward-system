@@ -1,17 +1,17 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Star, Trophy } from "lucide-react";
+import { RotateCw, Star, Trophy } from "lucide-react";
 
-type PetSnapshot = {
-  totalExp: number;
-  stageId: number;
-  stageName: string;
-  currentStageMin: number;
-  nextStageMin: number | null;
+import type { PetSnapshot } from "@/types/routine";
+
+type Props = {
+  pet: PetSnapshot;
+  onResetMissions?: () => void;
+  isResetting?: boolean;
 };
 
-export function PetCard({ pet }: { pet: PetSnapshot }) {
+export function PetCard({ pet, onResetMissions, isResetting = false }: Props) {
   const progressMax = (pet.nextStageMin ?? pet.totalExp) - pet.currentStageMin;
   const progressValue = Math.max(
     0,
@@ -94,21 +94,30 @@ export function PetCard({ pet }: { pet: PetSnapshot }) {
               {pet.nextStageMin ? `EXP ${pet.nextStageMin}` : "Max"}
             </p>
           </div>
-          <div className="col-span-2 flex items-center justify-between rounded-xl bg-white p-3 shadow-sm">
-            <div className="flex items-center gap-2 text-slate-700">
-              <Trophy className="h-5 w-5 text-indigo-500" />
-              <div>
-                <p className="text-xs text-slate-500">현재 Stage</p>
-                <p className="text-sm font-semibold">Stage {pet.stageId}</p>
-              </div>
+        <div className="col-span-2 flex items-center justify-between rounded-xl bg-white p-3 shadow-sm">
+          <div className="flex items-center gap-2 text-slate-700">
+            <Trophy className="h-5 w-5 text-indigo-500" />
+            <div>
+              <p className="text-xs text-slate-500">현재 Stage</p>
+              <p className="text-sm font-semibold">Stage {pet.stageId}</p>
             </div>
-            <button
-              type="button"
-              className="rounded-full bg-gradient-to-r from-[#7c5cff] via-[#9bb4ff] to-[#6ee7ff] px-4 py-2 text-xs font-semibold text-white shadow-md"
-            >
-              Power up
-            </button>
           </div>
+          <button
+            type="button"
+            onClick={onResetMissions}
+            disabled={!onResetMissions || isResetting}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white shadow-md transition ${
+              isResetting
+                ? "cursor-wait bg-slate-400"
+                : "bg-gradient-to-r from-[#7c5cff] via-[#9bb4ff] to-[#6ee7ff] hover:brightness-[1.05]"
+            }`}
+          >
+            <RotateCw
+              className={`h-4 w-4 ${isResetting ? "animate-spin" : ""}`}
+            />
+            {isResetting ? "초기화 중..." : "미션 초기화"}
+          </button>
+        </div>
         </div>
       </div>
     </motion.section>
